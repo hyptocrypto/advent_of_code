@@ -1,111 +1,84 @@
-from typing import Union
+import itertools
+from typing import Iterator
+from enum import Enum
 
 
-class Rock:
-    points = 1
+class Priority(Enum):
+    a = 1
+    b = 2
+    c = 3
+    d = 4
+    e = 5
+    f = 6
+    g = 7
+    h = 8
+    i = 9
+    j = 10
+    k = 11
+    l = 12
+    m = 13
+    n = 14
+    o = 15
+    p = 16
+    q = 17
+    r = 18
+    s = 19
+    t = 20
+    u = 21
+    v = 22
+    w = 23
+    x = 24
+    y = 25
+    z = 26
+    A = 27
+    B = 28
+    C = 29
+    D = 30
+    E = 31
+    F = 32
+    G = 33
+    H = 34
+    I = 35
+    J = 36
+    K = 37
+    L = 38
+    M = 39
+    N = 40
+    O = 41
+    P = 42
+    Q = 43
+    R = 44
+    S = 45
+    T = 46
+    U = 47
+    V = 48
+    W = 49
+    X = 50
+    Y = 51
+    Z = 52
 
-    def __init__(self) -> None:
-        pass
-
-    def __str__(self):
-        return "Rock"
-
-    def win(self):
-        return Scissors
-
-    def lose(self):
-        return Paper
-
-
-class Paper:
-    points = 2
-
-    def __init__(self) -> None:
-        pass
-
-    def __str__(self):
-        return "Paper"
-
-    def win(self):
-        return Rock
-
-    def lose(self):
-        return Scissors
-
-
-class Scissors:
-    points = 3
-
-    def __init__(self) -> None:
-        pass
-
-    def __str__(self):
-        return "Scissors"
-
-    def win(self):
-        return Paper
-
-    def lose(self):
-        return Rock
-
-
-class Matches:
-    ROCK = Rock
-    PAPER = Paper
-    SCISSORS = Scissors
-
-
-def rsp_solve(p1: Union[Rock, Paper, Scissors], p2: Union[Rock, Paper, Scissors]):
-    match type(p1):
-        case Matches.ROCK:
-            if isinstance(p2, Rock):
-                return "Draw"
-            if isinstance(p2, Paper):
-                return p2
-            if isinstance(p2, Scissors):
-                return p1
-
-        case Matches.PAPER:
-            if isinstance(p2, Rock):
-                return p1
-            if isinstance(p2, Paper):
-                return "Draw"
-            if isinstance(p2, Scissors):
-                return p2
-
-        case Matches.SCISSORS:
-            if isinstance(p2, Rock):
-                return p2
-            if isinstance(p2, Paper):
-                return p1
-            if isinstance(p2, Scissors):
-                return "Draw"
+    @classmethod
+    def from_str(cls, value):
+        for k, v in cls.__members__.items():
+            if k == value:
+                return v
+        else:
+            raise ValueError(f"'{cls.__name__}' enum not found for '{value}'")
 
 
-op_mapper = {"A": Rock, "B": Paper, "C": Scissors}
-mapper = {"X": "Lose", "Y": "Draw", "Z": "Win"}
+def grouper(iterator: Iterator, n: int) -> Iterator[list]:
+    while chunk := list(itertools.islice(iterator, n)):
+        yield chunk
 
 
 if __name__ == "__main__":
     total = 0
+    data = []
     with open("data.txt", "r") as f:
-        for line in f.readlines():
-            _op = line.split(" ")[0]
-            _mv = line.split(" ")[-1][0]
-            op = op_mapper.get(_op)()
-            mv = mapper.get(_mv)
-            if mv == "Win":
-                mv = op.lose()()
-            if mv == "Lose":
-                mv = op.win()()
-            if mv == "Draw":
-                mv = op_mapper.get(_op)()
+        for i in f.readlines():
+            data.append(i.strip("\n"))
 
-            res = rsp_solve(op, mv)
-            total += mv.points
-            if res == "Draw":
-                total += 3
-            if isinstance(res, type(mv)):
-                total += 6
-
+    for a, b, c in grouper(iter(data), 3):
+        over_lap = next((i for i in a if i in b and i in c), None)
+        total += Priority.from_str(over_lap).value
     print(total)
