@@ -1,84 +1,14 @@
-import itertools
-from typing import Iterator
-from enum import Enum
-
-
-class Priority(Enum):
-    a = 1
-    b = 2
-    c = 3
-    d = 4
-    e = 5
-    f = 6
-    g = 7
-    h = 8
-    i = 9
-    j = 10
-    k = 11
-    l = 12
-    m = 13
-    n = 14
-    o = 15
-    p = 16
-    q = 17
-    r = 18
-    s = 19
-    t = 20
-    u = 21
-    v = 22
-    w = 23
-    x = 24
-    y = 25
-    z = 26
-    A = 27
-    B = 28
-    C = 29
-    D = 30
-    E = 31
-    F = 32
-    G = 33
-    H = 34
-    I = 35
-    J = 36
-    K = 37
-    L = 38
-    M = 39
-    N = 40
-    O = 41
-    P = 42
-    Q = 43
-    R = 44
-    S = 45
-    T = 46
-    U = 47
-    V = 48
-    W = 49
-    X = 50
-    Y = 51
-    Z = 52
-
-    @classmethod
-    def from_str(cls, value):
-        for k, v in cls.__members__.items():
-            if k == value:
-                return v
-        else:
-            raise ValueError(f"'{cls.__name__}' enum not found for '{value}'")
-
-
-def grouper(iterator: Iterator, n: int) -> Iterator[list]:
-    while chunk := list(itertools.islice(iterator, n)):
-        yield chunk
-
-
 if __name__ == "__main__":
-    total = 0
-    data = []
-    with open("data.txt", "r") as f:
-        for i in f.readlines():
-            data.append(i.strip("\n"))
+    overlap = 0
+    data = open("data.txt", "r").read().strip()
+    pairs = data.split("\n")
+    for pair in pairs:
+        (a1, a2, b1, b2,) = [
+            int(item) for sub in [i.split("-") for i in pair.split(",")] for item in sub
+        ]
 
-    for a, b, c in grouper(iter(data), 3):
-        over_lap = next((i for i in a if i in b and i in c), None)
-        total += Priority.from_str(over_lap).value
-    print(total)
+        if (a1 >= b1 and a1 <= b2) or (b1 >= a1 and b1 <= a2):
+            overlap += 1
+            print(pair)
+            print("a1", "a2", "b1", "b2")
+    print(overlap)
